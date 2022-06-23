@@ -1,4 +1,4 @@
-import { FormEvent } from "react";
+import { FormEvent, useContext, useEffect } from "react";
 import alkemyApi from "../api/alkemyApi";
 import { useForm } from "../hooks/useForm";
 import { AlkemyLoginResponse } from "../interfaces/interfaces";
@@ -18,56 +18,42 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { grey } from "@mui/material/colors";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/auth";
 
 export const Login = () => {
   const { email, password, onChange, isValidEmail } = useForm({
     email: "",
     password: "",
   });
+  const { isLogged, errorMessage, addError, clearError, loginUser } =
+    useContext(AuthContext);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    isLogged === true && navigate("/home");
+  }, [isLogged]);
+
+  useEffect(() => {
+    errorMessage && Swal.fire("Error", errorMessage, "error");
+    return () => clearError();
+  }, [errorMessage]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!isValidEmail(email)) {
-      Swal.fire({
-        title: "Error!",
-        text: "Email not valid",
-        icon: "error",
-        confirmButtonText: "Cool",
-      });
+      addError("Email not valid");
 
       return;
     }
 
-    // if (email !== "challenge@alkemy.org" || password !== "react")
-    //   return console.log("Credenciales invalidas");
+    loginUser(email, password);
 
-    try {
-      const { data } = await alkemyApi.post<AlkemyLoginResponse>("", {
-        email,
-        password,
-      });
-
-      const token = data.token;
-
-      localStorage.setItem("token", token);
-      console.log(token);
-
-      Swal.fire({
-        title: "Success !",
-        text: "Login success",
-        icon: "success",
-        confirmButtonText: "Cool",
-      });
-    } catch (error: any) {
-      console.log(error.response.data.error || "Revise las credenciales");
-      Swal.fire({
-        title: "Error!",
-        text: `${error.response.data.error}` || "Check email and password",
-        icon: "error",
-        confirmButtonText: "Cool",
-      });
-    }
+    //credenciales validas
+    //email: challenge@alkemy.org
+    // password: react
   };
 
   return (

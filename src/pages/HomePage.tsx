@@ -1,10 +1,8 @@
-import { useMovies } from "../hooks/useMovies";
+import { Home } from "../components/Home";
 export const HomePage = () => {
-  const { isLoading, nowPlaying } = useMovies();
-
-  if (isLoading) return <p>Loading...</p>;
-
-  console.log(nowPlaying);
-
-  return <div>HomePage</div>;
+  return (
+    <>
+      <Home />
+    </>
+  );
 };

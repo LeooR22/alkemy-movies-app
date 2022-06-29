@@ -23,8 +23,8 @@ import { AuthContext } from "../context/auth";
 
 export const Login = () => {
   const { email, password, onChange, isValidEmail } = useForm({
-    email: "",
-    password: "",
+    email: "challenge@alkemy.org",
+    password: "react",
   });
   const { isLogged, errorMessage, addError, clearError, loginUser } =
     useContext(AuthContext);
